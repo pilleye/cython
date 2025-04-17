@@ -1,0 +1,56 @@
+PYTHON setup.py build_ext --inplace
+PYTHON -c "import a"
+
+######## setup.py ########
+
+
+from Cython.Build import cythonize
+from distutils.core import setup
+
+setup(
+  ext_modules = cythonize("**/*.pyx"),
+)
+
+
+######## mod.pxd ########
+
+cdef int foo()
+
+######## mod.pyx ########
+
+cdef int foo():
+    return 41
+
+######## pkg/__init__.py ########
+
+######## pkg/subpkg/__init__.py ########
+
+######## pkg/subpkg/submod.pxd ########
+
+cdef class A:
+  pass
+
+cdef int foo()
+
+######## pkg/subpkg/submod.pyx ########
+
+cdef class A:
+    def __init__(self):
+        pass
+
+cdef int foo():
+    return 42
+
+######## a.pyx ########
+
+cimport mod
+
+print(mod.foo())
+
+cimport pkg.subpkg.submod
+
+from pkg.subpkg.submod cimport A
+
+A()
+
+print(pkg.subpkg.submod.foo())
